@@ -77,7 +77,7 @@ async def get_current_user(token: str = Depends(get_token)) -> User | None:
     if not user_id:
         raise UserIsNotPresentException
 
-    user = await UserCRUD.find_by_id_or_none(id=int(user_id))
+    user = await UserCRUD.select_by_id_or_none(id=int(user_id))
 
     if not user:
         raise UserIsNotPresentException

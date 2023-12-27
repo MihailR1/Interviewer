@@ -1,6 +1,6 @@
 from typing import Any, Mapping, Sequence
 
-from sqlalchemy import Result, RowMapping, insert, select, update, MappingResult
+from sqlalchemy import MappingResult, Result, RowMapping, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.base.models import Base
@@ -9,7 +9,7 @@ from app.exceptions import DataBaseError
 from app.logger import logger
 
 
-class BaseCRUD:
+class CrudMixin:
     model = Base
 
     @staticmethod
@@ -49,15 +49,24 @@ class BaseCRUD:
         result = await cls._execute(query, commit=True)
         return result
 
+
+class BaseCRUD(CrudMixin):
     @classmethod
-    async def find_by_id_or_none(cls, id: int) -> MappingResult | None:
+    async def select_by_id_or_none(cls, id: int) -> MappingResult | None:
         result = await cls._select_basic(id=id)
         return result.mappings().one_or_none()
 
     @classmethod
-    async def find_all(cls, **filter_by) -> Sequence[RowMapping]:
+    async def select_all(cls, **filter_by) -> Sequence[RowMapping]:
         result = await cls._select_basic(**filter_by)
         return result.mappings().all()
+
+    @classmethod
+    async def update_by_id(cls, id: int, **new_data) -> RowMapping:
+        filter_by = {"id": id}
+        result = await cls._update_basic(new_data, filter_by)
+
+        return result.mappings().one()
 
     @classmethod
     async def insert(cls, **data) -> RowMapping:
