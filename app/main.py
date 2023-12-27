@@ -6,6 +6,6 @@ app = FastAPI()
 
 
 @app.get("/")
-async def main():
+async def main() -> None:
     print(datetime_now())
     return None

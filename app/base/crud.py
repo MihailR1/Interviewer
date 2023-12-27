@@ -33,9 +33,7 @@ class BaseCRUD:
         return await cls._execute(query)
 
     @classmethod
-    async def _update_basic(
-        cls, new_data: Mapping[str, Any], update_by: Mapping[str, Any]
-    ) -> Result[Any]:
+    async def _update_basic(cls, new_data: Mapping[str, Any], update_by: Mapping[str, Any]) -> Result[Any]:
         query = (update(cls.model).values(**new_data).filter_by(**update_by)).returning(
             cls.model.__table__.columns
         )

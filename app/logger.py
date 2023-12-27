@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from mypy.build import Any
 from pythonjsonlogger import jsonlogger
 
 from app.config import settings
@@ -10,7 +11,7 @@ logHandler = logging.StreamHandler()
 
 
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
-    def add_fields(self, log_record, record, message_dict) -> None:
+    def add_fields(self, log_record: Any, record: Any, message_dict: dict) -> None:
         super(CustomJsonFormatter, self).add_fields(log_record, record, message_dict)
         if not log_record.get("timestamp"):
             now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
