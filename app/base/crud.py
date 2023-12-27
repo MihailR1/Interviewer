@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.base.models import Base
 from app.database import async_session_factory
-from app.exceptions import DataBaseError
+from app.base.exceptions import DataBaseError
 from app.logger import logger
 
 

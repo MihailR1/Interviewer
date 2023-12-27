@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Field, SQLModel
 
-from app.base.utils import datetime_now
+from app.utils.date_time import datetime_now
 
 
 class Base(SQLModel):

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Response
 
-from app.base.utils import CookiesNames
-from app.exceptions import UserAlreadyExistsException
+
+from app.users.exceptions import UserAlreadyExistsException
 from app.users.auth import (
     authenticate_user,
     create_access_token,
@@ -11,6 +11,7 @@ from app.users.auth import (
 from app.users.crud import UserCRUD
 from app.users.models import User
 from app.users.schemas import UserAuth
+from app.utils.cookie_enums import CookiesNames
 
 router_users = APIRouter(prefix="/users", tags=["Пользователи"])
 router_auth = APIRouter(prefix="/auth", tags=["Авторизация и регистрация"])

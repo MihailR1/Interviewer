@@ -3,6 +3,8 @@ from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
+from app.config import settings
+
 
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
@@ -30,4 +32,4 @@ class AdminAuth(AuthenticationBackend):
         return True
 
 
-authentication_backend = AdminAuth(secret_key="3289JHd8@jhkjasf")
+authentication_backend = AdminAuth(secret_key=settings.SECRET_KEY)

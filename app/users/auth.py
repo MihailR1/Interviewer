@@ -5,17 +5,18 @@ from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import EmailStr
 
-from app.base.utils import CookiesNames
+
 from app.config import settings
-from app.exceptions import (
+from app.users.exceptions import (
     IncorrectTokenFormatException,
     TokenAbsentException,
     TokenExpiredException,
-    UserIsNotPresentException,
+    UserIsNotAuthException,
     WrongEmailOrPasswordException,
 )
 from app.users.crud import UserCRUD
 from app.users.models import User
+from app.utils.cookie_enums import CookiesNames
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -75,11 +76,11 @@ async def get_current_user(token: str = Depends(get_token)) -> User | None:
     user_id: str = payload.get("sub")
 
     if not user_id:
-        raise UserIsNotPresentException
+        raise UserIsNotAuthException
 
     user = await UserCRUD.select_by_id_or_none(id=int(user_id))
 
     if not user:
-        raise UserIsNotPresentException
+        raise UserIsNotAuthException
 
     return user

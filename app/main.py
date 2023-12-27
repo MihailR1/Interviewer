@@ -7,7 +7,7 @@ from sqladmin import Admin
 from app.config import settings
 from app.database import engine
 from app.questions.routes import router as questions_router
-from app.users.admin.auth import authentication_backend
+from app.admin.auth import authentication_backend
 from app.users.routes import router_auth, router_users
 
 app = FastAPI()
