@@ -11,3 +11,6 @@ class Base(SQLModel):
     id: int = Field(default=None, nullable=False, primary_key=True, index=True)
     created: datetime = Field(default_factory=datetime_now)
     updated: datetime = Field(default_factory=datetime_now)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__} - {self.id}"

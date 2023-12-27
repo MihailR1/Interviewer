@@ -1,7 +1,7 @@
 import enum
 
 
-class Rights(enum.Enum):
+class Permission(enum.Enum):
     user = "user"
     moderator = "moderator"
     admin = "admin"

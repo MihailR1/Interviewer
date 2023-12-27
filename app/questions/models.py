@@ -1,10 +1,12 @@
+from typing import Optional, List
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.base.models import Base
 from app.config import settings
-from app.questions.enums import Levels
+from app.questions.enums import Levels, Status
 from app.users.models import User
 
 
@@ -21,7 +23,7 @@ class Category(Base, table=True):
     __tablename__ = "Categories"
 
     name: str = Field(default="Any", description="Категории вопросов")
-    questions: list["Question"] = Relationship(
+    questions: List["Question"] = Relationship(
         back_populates="categories", link_model=CategoryQuestionLink
     )
 
@@ -29,11 +31,10 @@ class Category(Base, table=True):
 class Question(Base, table=True):
     __tablename__ = "Questions"
 
-    user_id: int = ForeignKey("User.id")
-    # user: "User" = relationship(back_populates='questions', lazy='joined')
-    categories: list["Category"] = Relationship(
-        back_populates="questions", link_model=CategoryQuestionLink
-    )
+    categories: List["Category"] | None = Relationship(
+        back_populates="questions", link_model=CategoryQuestionLink)
+    user_id: int = Field(default=None, foreign_key='Users.id')
+    user: Optional['User'] = Relationship(back_populates='questions')
     title: str = Field(
         index=True,
         nullable=False,
@@ -49,13 +50,14 @@ class Question(Base, table=True):
         default=Levels.junior,
         description="Для какого уровня этот вопрос - Junior/Middle/Senior",
     )
-    likes_count: int | None = Field(default=0, description="Для подсчета кол-ва лайков")
-    easy_count: int | None = Field(
+    status: Status = Field(default=Status.moderation)
+    likes_count: int = Field(default=0, description="Для подсчета кол-ва лайков")
+    easy_count: int = Field(
         default=0,
         description="Для подсчета сколько людей посчитали вопрос простым/сложным",
     )
-    middle_count: int | None = Field(default=0)
-    hard_count: int | None = Field(default=0)
-    got_at_interview: int | None = Field(
+    middle_count: int = Field(default=0)
+    hard_count: int = Field(default=0)
+    got_at_interview: int = Field(
         default=0, description="Счетчик, скольким попадался на реальном собеседовании"
     )
