@@ -9,8 +9,20 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     TIMEZONE: DstTzInfo = pytz.timezone("Europe/Moscow")
 
+    MIN_QUESTION_TITLE_TEXT_LENGTH: int = 15
+    MAX_QUESTION_TITLE_TEXT_LENGTH: int = 500
+    MIN_QUESTION_TEXT_LENGTH: int = 15
+    MAX_QUESTION_TEXT_LENGTH: int = 500
+
     BASEDIR: str = os.path.abspath(os.path.dirname(__file__))
     ENV_FILE_PATH: str = os.path.join(BASEDIR, "..", ".env")
+
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
+    REDIS_HOST: str
+    REDIS_PORT: int
 
     POSTGRES_DB: str
     POSTGRES_USER: str

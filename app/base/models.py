@@ -6,7 +6,7 @@ from app.base.utils import datetime_now
 
 
 class Base(SQLModel):
-    __table__ = "base"
+    __tablename__ = "base"
 
     id: int = Field(default=None, nullable=False, primary_key=True, index=True)
     created: datetime = Field(default_factory=datetime_now)

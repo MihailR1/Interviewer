@@ -1,6 +1,6 @@
 from typing import Any, Mapping, Sequence
 
-from sqlalchemy import Result, RowMapping, select, update
+from sqlalchemy import Result, RowMapping, insert, select, update, MappingResult
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.base.models import Base
@@ -33,8 +33,10 @@ class BaseCRUD:
         return await cls._execute(query)
 
     @classmethod
-    async def _update_basic(cls, new_data: Mapping[str, Any], update_by: Mapping[str, Any]) -> Result[Any]:
-        query = (update(cls.model).values(**new_data).filter_by(**update_by)).returning(
+    async def _update_basic(
+        cls, new_data: Mapping[str, Any], filter_by: Mapping[str, Any]
+    ) -> Result[Any]:
+        query = (update(cls.model).values(**new_data).filter_by(**filter_by)).returning(
             cls.model.__table__.columns
         )
 
@@ -42,7 +44,13 @@ class BaseCRUD:
         return result
 
     @classmethod
-    async def find_by_id_or_none(cls, id: int) -> RowMapping | None:
+    async def _insert_basic(cls, **data) -> Result[Any]:
+        query = insert(cls.model).values(**data).returning(cls.model.__table__.columns)
+        result = await cls._execute(query, commit=True)
+        return result
+
+    @classmethod
+    async def find_by_id_or_none(cls, id: int) -> MappingResult | None:
         result = await cls._select_basic(id=id)
         return result.mappings().one_or_none()
 
@@ -50,3 +58,8 @@ class BaseCRUD:
     async def find_all(cls, **filter_by) -> Sequence[RowMapping]:
         result = await cls._select_basic(**filter_by)
         return result.mappings().all()
+
+    @classmethod
+    async def insert(cls, **data) -> RowMapping:
+        result = await cls._insert_basic(**data)
+        return result.mappings().one()
