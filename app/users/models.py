@@ -1,6 +1,5 @@
 from typing import List
 
-from sqlalchemy.orm import relationship
 from sqlmodel import Field, Relationship
 
 from app.base.models import Base
@@ -16,4 +15,7 @@ class User(Base, table=True):
     email: str = Field(title="test@mail.ru", index=True)
     hashed_password: str = Field(nullable=False, exclude=True)
     username: str | None = Field(default=None, title="Username")
-    questions: List['Question'] | None = Relationship(back_populates='user')
+    questions: List["Question"] | None = Relationship(back_populates="user")
+
+    def __str__(self) -> str:
+        return f"{self.rights.value} - {self.email}"

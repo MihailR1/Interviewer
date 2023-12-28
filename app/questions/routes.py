@@ -17,8 +17,10 @@ async def get_all_questions() -> list[Question]:
 
 
 @router.post("/create")
-async def create_question(question: AddQuestion, current_user: User = Depends(get_current_user)):
+async def create_question(
+    question: AddQuestion, current_user: User = Depends(get_current_user)
+) -> Question:
 
     save = await QuestionCRUD.insert(user_id=current_user.id, **question.model_dump())
-    return save
 
+    return save

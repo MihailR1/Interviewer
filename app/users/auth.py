@@ -5,8 +5,8 @@ from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import EmailStr
 
-
 from app.config import settings
+from app.users.crud import UserCRUD
 from app.users.exceptions import (
     IncorrectTokenFormatException,
     TokenAbsentException,
@@ -14,7 +14,6 @@ from app.users.exceptions import (
     UserIsNotAuthException,
     WrongEmailOrPasswordException,
 )
-from app.users.crud import UserCRUD
 from app.users.models import User
 from app.utils.cookie_enums import CookiesNames
 

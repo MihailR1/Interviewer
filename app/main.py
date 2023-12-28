@@ -4,24 +4,23 @@ from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 from sqladmin import Admin
 
-from app.admin.view import UserAdmin, QuestionsAdmin, QuestionsModerations
+from app.admin.auth import authentication_backend
+from app.admin.view import CategoryAdmin, QuestionsAdmin, UserAdmin
 from app.config import settings
 from app.database import engine
 from app.questions.routes import router as questions_router
-from app.admin.auth import authentication_backend
 from app.users.routes import router_auth, router_users
 
 app = FastAPI()
-#authentication_backend=authentication_backend
-admin = Admin(app, engine)
 
 app.include_router(router_users)
 app.include_router(router_auth)
 app.include_router(questions_router)
 
-admin.add_view(UserAdmin)
+admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(QuestionsAdmin)
-admin.add_view(QuestionsModerations)
+admin.add_view(CategoryAdmin)
+admin.add_view(UserAdmin)
 
 
 @app.on_event("startup")

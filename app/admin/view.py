@@ -1,29 +1,48 @@
-from sqladmin import Admin, ModelView
+from sqladmin import ModelView
 
-from app.questions.models import Question
+from app.questions.models import Category, Question
 from app.users.models import User
-from app.questions.enums import Status
-
-
-class UserAdmin(ModelView, model=User):
-    column_list = [User.id, User.email, User.username, User.created]
-    column_searchable_list = [User.email, User.username]
-    column_sortable_list = [User.created, User.id]
-    name = "User"
-    name_plural = "Users"
-    icon = "fa-solid fa-user"
-    can_create = False
-    can_edit = True
-    can_delete = False
-    can_view_details = True
 
 
 class QuestionsAdmin(ModelView, model=Question):
-    column_list = [Question.id, Question.status, Question.title, Question.text, Question.level, Question.updated]
+    column_list = [
+        Question.id,
+        Question.status,
+        Question.title,
+        Question.text,
+        Question.level,
+        Question.updated,
+    ]
     column_searchable_list = [Question.title, Question.text]
-    column_sortable_list = [Question.status, Question.updated, Question.id, Question.level]
+    column_sortable_list = [
+        Question.status,
+        Question.updated,
+        Question.id,
+        Question.level,
+    ]
     name = "Question"
-    name_plural = "Question"
+    name_plural = "Questions"
+    icon = "fa-solid fa-book"
+    can_create = True
+    can_edit = True
+    can_delete = True
+    can_view_details = True
+
+    # def list_query(self, request: Request) -> Select:
+    #     return select(self.model).where(self.model.status == Status.moderation)
+
+
+class CategoryAdmin(ModelView, model=Category):
+    column_list = [Category.id, Category.name, Category.questions, Category.updated]
+    column_searchable_list = [Category.name, Category.questions]
+    column_sortable_list = [
+        Category.id,
+        Category.questions,
+        Question.updated,
+        Category.name,
+    ]
+    name = "Category"
+    name_plural = "Categories"
     icon = "fa-solid fa-book"
     can_create = True
     can_edit = True
@@ -31,14 +50,14 @@ class QuestionsAdmin(ModelView, model=Question):
     can_view_details = True
 
 
-class QuestionsModerations(ModelView, model=Question):
-    column_list = [c.name for c in Question.__table__.c]
-    column_searchable_list = [Question.title, Question.text]
-    column_sortable_list = [Question.status, Question.updated, Question.id, Question.level]
-    name = "Question Moderation"
-    name_plural = "Questions Moderation"
-    icon = "fa-solid fa-book"
+class UserAdmin(ModelView, model=User):
+    column_list = [User.id, User.rights, User.email, User.username, User.created]
+    column_searchable_list = [User.email, User.username]
+    column_sortable_list = [User.rights, User.created, User.id]
+    name = "User"
+    name_plural = "Users"
+    icon = "fa-solid fa-user"
     can_create = False
     can_edit = True
-    can_delete = True
+    can_delete = False
     can_view_details = True

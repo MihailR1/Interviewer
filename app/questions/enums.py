@@ -8,5 +8,5 @@ class Levels(enum.Enum):
 
 
 class Status(enum.Enum):
-    active = 'active'
-    moderation = 'moderation'
+    active = "active"
+    moderation = "moderation"

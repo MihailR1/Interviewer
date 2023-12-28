@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends, Response
 
-
-from app.users.exceptions import UserAlreadyExistsException
 from app.users.auth import (
     authenticate_user,
     create_access_token,
@@ -9,6 +7,7 @@ from app.users.auth import (
     get_password_hash,
 )
 from app.users.crud import UserCRUD
+from app.users.exceptions import UserAlreadyExistsException
 from app.users.models import User
 from app.users.schemas import UserAuth
 from app.utils.cookie_enums import CookiesNames
