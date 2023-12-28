@@ -20,7 +20,7 @@ class CategoryQuestionLink(SQLModel, table=True):
 class Category(Base, table=True):
     __tablename__ = "Categories"
 
-    name: str = Field(default="Any", description="Категории вопросов")
+    name: str = Field(default="Any", unique=True, description="Категории вопросов")
     questions: List["Question"] = Relationship(
         back_populates="categories", link_model=CategoryQuestionLink
     )
@@ -40,11 +40,13 @@ class Question(Base, table=True):
     title: str = Field(
         index=True,
         nullable=False,
+        unique=True,
         min_length=settings.MIN_QUESTION_TITLE_TEXT_LENGTH,
         max_length=settings.MAX_QUESTION_TITLE_TEXT_LENGTH,
     )
     text: str = Field(
         nullable=False,
+        unique=True,
         min_length=settings.MIN_QUESTION_TEXT_LENGTH,
         max_length=settings.MAX_QUESTION_TEXT_LENGTH,
     )

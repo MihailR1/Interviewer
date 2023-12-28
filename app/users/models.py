@@ -12,9 +12,9 @@ class User(Base, table=True):
     rights: Permission = Field(
         default=Permission.user, description="Права доступа: админ или обычный юзер"
     )
-    email: str = Field(title="test@mail.ru", index=True)
+    email: str = Field(index=True, unique=True, title="test@mail.ru",)
     hashed_password: str = Field(nullable=False, exclude=True)
-    username: str | None = Field(default=None, title="Username")
+    username: str | None = Field(default=None, unique=True, title="Username")
     questions: List["Question"] | None = Relationship(back_populates="user")
 
     def __str__(self) -> str:
