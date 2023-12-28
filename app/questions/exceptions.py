@@ -5,4 +5,4 @@ from app.base.exceptions import BaseEx
 
 class QuestionAlreadyExistError(BaseEx):
     status_code = status.HTTP_409_CONFLICT
-    detail = "Вопрос уже есть в базе данных"
+    detail = "Вопрос с таким заголовком или текстом уже есть в БД"

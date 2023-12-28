@@ -22,7 +22,7 @@ async def create_question(
     question: AddQuestion, current_user: User = Depends(get_current_user)
 ) -> Question:
 
-    exist_question = await QuestionCRUD.select_question_by_title_and_text(
+    exist_question = await QuestionCRUD.find_question_by_same_title_or_text(
         question.title, question.text)
 
     if exist_question:

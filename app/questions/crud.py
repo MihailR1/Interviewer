@@ -1,4 +1,4 @@
-from sqlalchemy import RowMapping, Sequence, select, or_
+from sqlalchemy import RowMapping, Sequence, select
 
 from app.base.crud import BaseCRUD
 from app.questions.enums import Status
@@ -16,9 +16,9 @@ class QuestionCRUD(BaseCRUD):
         return result.mappings().all()
 
     @classmethod
-    async def select_question_by_title_and_text(cls, title: str, text: str) ->RowMapping:
-        query = (select(cls.model.__table__.columns).
-                 where(cls.model.title == title or cls.model.text == text).limit(1))
+    async def find_question_by_same_title_or_text(cls, title: str, text: str) -> RowMapping:
+        query = (select(cls.model).
+                 where((cls.model.title == title) | (cls.model.text == text)).limit(1))
         result = await cls._execute(query)
 
         return result.mappings().first()
