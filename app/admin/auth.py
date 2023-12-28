@@ -3,13 +3,15 @@ from starlette.requests import Request
 
 from app.config import settings
 from app.logger import logger
-from app.users.auth import authenticate_user, create_access_token, get_current_user
+from app.users.auth import create_access_token
+from app.users.auth_utils import authenticate_user, get_current_user
 from app.users.enums import Permission
 from app.users.exceptions import (
     IncorrectTokenFormatException,
     TokenExpiredException,
     WrongEmailOrPasswordException,
 )
+from app.utils.cookie_enums import CookiesNames
 
 
 class AdminAuth(AuthenticationBackend):
@@ -23,7 +25,9 @@ class AdminAuth(AuthenticationBackend):
             return False
 
         if user and user.rights in (Permission.admin, Permission.moderator):
-            access_token = create_access_token({"sub": str(user.id)})
+            access_token = await create_access_token(
+                {CookiesNames.auth.name: str(user.id)}
+            )
             request.session.update({"token": access_token})
         else:
             logger.info("Кто-то тестирует админку на прочность")

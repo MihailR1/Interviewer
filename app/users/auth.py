@@ -1,34 +1,24 @@
 from datetime import datetime, timedelta
 
-from fastapi import Depends, Request
-from jose import ExpiredSignatureError, JWTError, jwt
+from jose import jwt
 from passlib.context import CryptContext
-from pydantic import EmailStr
 
 from app.config import settings
-from app.users.crud import UserCRUD
-from app.users.exceptions import (
-    IncorrectTokenFormatException,
-    TokenAbsentException,
-    TokenExpiredException,
-    UserIsNotAuthException,
-    WrongEmailOrPasswordException,
-)
-from app.users.models import User
-from app.utils.cookie_enums import CookiesNames
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def get_password_hash(password: str) -> str:
+async def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+async def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+async def create_access_token(
+    data: dict, expires_delta: timedelta | None = None
+) -> str:
     to_encode = data.copy()
 
     if expires_delta:
@@ -44,42 +34,3 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     )
 
     return encoded_jwt
-
-
-async def authenticate_user(email: EmailStr, password: str) -> User | None:
-    user = await UserCRUD.find_by_email_or_none(email=email)
-
-    if not user or (user and not verify_password(password, user.hashed_password)):
-        raise WrongEmailOrPasswordException
-
-    return user
-
-
-def get_token(request: Request) -> str:
-    token = request.cookies.get(CookiesNames.auth.value)
-
-    if not token:
-        raise TokenAbsentException
-
-    return token
-
-
-async def get_current_user(token: str = Depends(get_token)) -> User | None:
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, settings.ALGORITHM)
-    except ExpiredSignatureError:
-        raise TokenExpiredException
-    except JWTError:
-        raise IncorrectTokenFormatException
-
-    user_id: str = payload.get("sub")
-
-    if not user_id:
-        raise UserIsNotAuthException
-
-    user = await UserCRUD.select_by_id_or_none(id=int(user_id))
-
-    if not user:
-        raise UserIsNotAuthException
-
-    return user
