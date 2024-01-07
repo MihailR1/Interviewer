@@ -9,9 +9,11 @@ class Base(SQLModel):
 
     id: int = Field(default=None, nullable=False, primary_key=True, index=True)
     created: datetime = Field(
+        default=datetime.utcnow,
         sa_column_kwargs={"server_default": text("TIMEZONE('utc', now())")}
     )
     updated: datetime = Field(
+        default=datetime.utcnow,
         sa_column_kwargs={
             "server_default": text("TIMEZONE('utc', now())"),
             "onupdate": text("TIMEZONE('utc', now())"),

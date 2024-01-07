@@ -28,6 +28,14 @@ class Settings(BaseSettings):
     DB_ENGINE: str = "asyncpg"
     DB_TYPE: str = "postgresql"
 
+    DEFAULT_EMAIL: str
+    VIRTUAL_HOST: str
+    VIRTUAL_PORT: int
+    LETSENCRYPT_HOST: str
+    LETSENCRYPT_EMAIL: str
+    NGINX_PROXY_CONTAINER: str
+    CSRF_TRUSTED_ORIGINS: str
+
     @property
     def DATABASE_URL(self) -> str:
         return (

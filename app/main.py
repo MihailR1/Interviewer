@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from fastapi.middleware.cors import CORSMiddleware
 from redis import asyncio as aioredis
 from sqladmin import Admin
 
@@ -21,6 +22,17 @@ admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(QuestionsAdmin)
 admin.add_view(CategoryAdmin)
 admin.add_view(UserAdmin)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers",
+                   "Access-Control-Allow-Origin",
+                   "Authorization"],
+)
 
 
 @app.on_event("startup")
