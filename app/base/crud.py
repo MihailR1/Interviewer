@@ -1,6 +1,7 @@
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping, TypeVar
 
-from sqlalchemy import MappingResult, Result, RowMapping, insert, select, update
+import pydantic
+from sqlalchemy import Result, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.base.exceptions import DataBaseError
@@ -51,24 +52,26 @@ class CrudMixin:
 
 
 class BaseCRUD(CrudMixin):
+    _SchemaType = TypeVar("_SchemaType", bound=pydantic.BaseModel)
+
     @classmethod
-    async def select_by_id_or_none(cls, id: int) -> MappingResult | None:
+    async def select_by_id_or_none(cls, id: int) -> _SchemaType | None:
         result = await cls._select_basic(id=id)
         return result.mappings().one_or_none()
 
     @classmethod
-    async def select_all(cls, **filter_by) -> Sequence[RowMapping]:
+    async def select_all(cls, **filter_by) -> list[_SchemaType]:
         result = await cls._select_basic(**filter_by)
-        return result.mappings().all()
+        return result.mappings().all()  # noqa
 
     @classmethod
-    async def update_by_id(cls, id: int, **new_data) -> RowMapping:
+    async def update_by_id(cls, id: int, **new_data) -> _SchemaType:
         filter_by = {"id": id}
         result = await cls._update_basic(new_data, filter_by)
 
-        return result.mappings().one()
+        return result.mappings().one()  # noqa
 
     @classmethod
-    async def insert(cls, **data) -> RowMapping:
+    async def insert(cls, **data) -> _SchemaType:
         result = await cls._insert_basic(**data)
-        return result.mappings().one()
+        return result.mappings().one()  # noqa

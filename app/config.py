@@ -1,18 +1,14 @@
 import os
 
-import pytz
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pytz.tzinfo import DstTzInfo
 
 
 class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
-    TIMEZONE: DstTzInfo = pytz.timezone("Europe/Moscow")
+    SQL_ECHO: bool = False
 
     MIN_QUESTION_TITLE_TEXT_LENGTH: int = 15
-    MAX_QUESTION_TITLE_TEXT_LENGTH: int = 500
     MIN_QUESTION_TEXT_LENGTH: int = 15
-    MAX_QUESTION_TEXT_LENGTH: int = 500
 
     BASEDIR: str = os.path.abspath(os.path.dirname(__file__))
     ENV_FILE_PATH: str = os.path.join(BASEDIR, "..", ".env")
