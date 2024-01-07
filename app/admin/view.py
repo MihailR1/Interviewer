@@ -20,6 +20,7 @@ class QuestionsAdmin(ModelView, model=Question):
         Question.id,
         Question.level,
     ]
+    edit_template = "custom_edit.html"
     name = "Question"
     name_plural = "Questions"
     icon = "fa-solid fa-book"

@@ -50,7 +50,7 @@ async def create_question(
 async def count_statistics_for_questions(question_id: int, stat_name: StatsCount) -> None:
     select_question = await QuestionCRUD.select_by_id_or_none(id=question_id)
 
-    get_atr_value = getattr(select_question, stat_name.value)
-    new_data = {stat_name.value: get_atr_value + 1}
+    stat_value = getattr(select_question, stat_name.value)
+    new_data = {stat_name.value: stat_value + 1}
 
     await QuestionCRUD.update_by_id(id=question_id, **new_data)
