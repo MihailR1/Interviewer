@@ -1,0 +1,62 @@
+version: '3.3'
+
+services:
+  api:
+    build: .
+    container_name: fastapi
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:14
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+
+  redis:
+      image: redis:7
+      container_name: redis_proj
+
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: nginxproxy/nginx-proxy
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+    depends_on:
+      - api
+
+  nginx-proxy-acme:
+    container_name: nginx-proxy-acme
+    image: nginxproxy/acme-companion
+    env_file:
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - acme:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
+
+volumes:
+  certs:
+  html:
+  vhost:
+  acme:
