@@ -2,10 +2,10 @@
 {% block tail %}
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
-ClassicEditor
-    .create(document.querySelector('#name'))  // Or any other field
+  ClassicEditor
+    .create(document.querySelector('#text, #title, #answer'))
     .catch(error => {
-        console.error(error);
+      console.error(error);
     });
 </script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi.middleware.cors import CORSMiddleware
 from redis import asyncio as aioredis
 from sqladmin import Admin
 
@@ -18,11 +18,15 @@ app.include_router(router_users)
 app.include_router(router_auth)
 app.include_router(questions_router)
 
-admin = Admin(app, engine, authentication_backend=authentication_backend)
+admin = Admin(
+    app,
+    engine,
+    authentication_backend=authentication_backend,
+    templates_dir='app/templates'
+)
 admin.add_view(QuestionsAdmin)
 admin.add_view(CategoryAdmin)
 admin.add_view(UserAdmin)
-
 
 app.add_middleware(
     CORSMiddleware,
