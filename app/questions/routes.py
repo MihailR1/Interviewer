@@ -10,7 +10,7 @@ from app.questions.schemas import AddQuestion
 from app.users.auth_utils import get_current_user
 from app.users.models import User
 
-router = APIRouter(prefix="/quenstions", tags=["Вопросы"])
+router = APIRouter(prefix="/questions", tags=["Вопросы"])
 
 
 @router.get("/")

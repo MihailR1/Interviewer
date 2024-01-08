@@ -17,12 +17,12 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_DAYS: int
 
-
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_HOST: str
     POSTGRES_PASSWORD: str
     POSTGRES_PORT: int
+    PGDATA: str
     DB_ENGINE: str = "asyncpg"
     DB_TYPE: str = "postgresql"
 
