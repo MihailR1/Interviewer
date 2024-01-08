@@ -2,10 +2,7 @@
 {% block tail %}
 <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
 <script>
-  ClassicEditor
-    .create(document.querySelector('#text, #title, #answer'))
-    .catch(error => {
-      console.error(error);
-    });
+  const textareas = document.querySelectorAll("textarea")
+  textareas.forEach(textarea => ClassicEditor.create(textarea));
 </script>
 {% endblock %}
