@@ -24,8 +24,8 @@ async def get_all_active_questions() -> list[Question]:
 async def get_random_questions(number_of_questions: int = 15) -> list[Question]:
     """Возвращает 15 рандомных вопросов для технического интервью"""
 
-    result = await QuestionCRUD.select_questions_with_status(status=Status.active)
-    choice_random_questions = random.choices(result, k=number_of_questions)
+    all_questions = await QuestionCRUD.select_questions_with_status(status=Status.active)
+    choice_random_questions = random.choices(all_questions, k=number_of_questions)
 
     return choice_random_questions
 

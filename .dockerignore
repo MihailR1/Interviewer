@@ -1,6 +1,13 @@
 ### Python template
 
 .dockerignore
+.editorconfig
+.env-example
+.gitignore
+.pre-commit-config.yaml
+setup.cfg
+Makefile
+README.md
 Dockerfile
 docker-compose.yaml
 docker-compose.yml
