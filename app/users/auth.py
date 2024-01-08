@@ -25,7 +25,7 @@ async def create_access_token(
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(
-            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            days=settings.ACCESS_TOKEN_EXPIRE_DAYS
         )
 
     to_encode.update({"exp": expire})
