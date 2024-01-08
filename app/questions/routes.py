@@ -13,21 +13,15 @@ from app.users.models import User
 router = APIRouter(prefix="/quenstions", tags=["Вопросы"])
 
 
-@router.get("/all")
-async def get_all_active_questions() -> list[Question]:
-    result = await QuestionCRUD.select_questions_with_status(status=Status.active)
-
-    return result
-
-
-@router.get("/random_questions_for_interview")
-async def get_random_questions(number_of_questions: int = 15) -> list[Question]:
-    """Возвращает 15 рандомных вопросов для технического интервью"""
-
+@router.get("/")
+async def all_questions(number_of_questions: int = 15, is_random: bool = True) -> list[Question]:
     all_questions = await QuestionCRUD.select_questions_with_status(status=Status.active)
-    choice_random_questions = random.choices(all_questions, k=number_of_questions)
 
-    return choice_random_questions
+    if is_random:
+        choice_random_questions = random.choices(all_questions, k=number_of_questions)
+        return choice_random_questions
+
+    return all_questions[:number_of_questions]
 
 
 @router.post("/create")
