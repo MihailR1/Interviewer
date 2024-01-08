@@ -13,7 +13,6 @@ services:
     command: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000
     depends_on:
       - db
-      - redis
 
   db:
     image: postgres:16.1
@@ -22,10 +21,6 @@ services:
       - "5432:5432"
     env_file:
       - .env
-
-  redis:
-      image: redis:7
-      container_name: redis_proj
 
   nginx-proxy:
     container_name: nginx-proxy
