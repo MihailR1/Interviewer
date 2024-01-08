@@ -17,8 +17,6 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_DAYS: int
 
-    REDIS_HOST: str
-    REDIS_PORT: int
 
     POSTGRES_DB: str
     POSTGRES_USER: str
