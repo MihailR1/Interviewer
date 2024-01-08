@@ -13,6 +13,8 @@ class QuestionsAdmin(ModelView, model=Question):
         Question.level,
         Question.updated,
     ]
+    column_formatters = {Question.title: lambda m, a: m.title[:80],
+                         Question.text: lambda m, a: m.text[:120]}
     column_searchable_list = [Question.title, Question.text]
     column_sortable_list = [
         Question.status,
