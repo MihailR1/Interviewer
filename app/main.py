@@ -22,7 +22,7 @@ admin = Admin(
     app,
     engine,
     authentication_backend=authentication_backend,
-    templates_dir='app/templates'
+    templates_dir='app/admin/templates'
 )
 admin.add_view(QuestionsAdmin)
 admin.add_view(CategoryAdmin)
