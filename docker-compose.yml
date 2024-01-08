@@ -10,7 +10,7 @@ services:
       - "8000:8000"
     volumes:
         - .:/new_app
-    command: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --forwarded-allow-ips='*' --proxy-headers && alembic upgrade head
     depends_on:
       - db
 
