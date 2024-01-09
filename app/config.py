@@ -1,11 +1,13 @@
 import os
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
-    SQL_ECHO: bool = False
+    SQL_ECHO: bool = True
+    MODE: Literal["DEV", "TEST", "PROD"]
 
     MIN_QUESTION_TITLE_TEXT_LENGTH: int = 15
     MIN_QUESTION_TEXT_LENGTH: int = 15
@@ -26,6 +28,12 @@ class Settings(BaseSettings):
     DB_ENGINE: str = "asyncpg"
     DB_TYPE: str = "postgresql"
 
+    TEST_DB_HOST: str
+    TEST_DB_PORT: int
+    TEST_DB_USER: str
+    TEST_DB_PASS: str
+    TEST_DB_NAME: str
+
     DEFAULT_EMAIL: str
     VIRTUAL_HOST: str
     VIRTUAL_PORT: int
@@ -39,6 +47,13 @@ class Settings(BaseSettings):
         return (
             f"{self.DB_TYPE}+{self.DB_ENGINE}://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        )
+
+    @property
+    def TEST_DATABASE_URL(self):
+        return (
+            f"{self.DB_TYPE}+{self.DB_ENGINE}://{self.TEST_DB_USER}:{self.TEST_DB_PASS}@"
+            f"{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}"
         )
 
     model_config = SettingsConfigDict(env_file=ENV_FILE_PATH)
