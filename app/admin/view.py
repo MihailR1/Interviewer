@@ -15,7 +15,7 @@ class QuestionsAdmin(ModelView, model=Question):
     ]
     column_formatters = {Question.title: lambda m, a: m.title[:80],
                          Question.text: lambda m, a: m.text[:120]}
-    column_searchable_list = [Question.title, Question.text]
+    column_searchable_list = [Question.title, Question.text, Question.answer]
     column_sortable_list = [
         Question.status,
         Question.updated,
@@ -23,6 +23,7 @@ class QuestionsAdmin(ModelView, model=Question):
         Question.level,
     ]
     edit_template = "custom_edit.html"
+    create_template = "custom_create.html"
     name = "Question"
     name_plural = "Questions"
     icon = "fa-solid fa-book"
