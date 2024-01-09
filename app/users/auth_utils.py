@@ -25,7 +25,7 @@ async def get_token(request: Request) -> str:
     return token
 
 
-async def authenticate_user(email: EmailStr, password: str) -> User | None:
+async def authenticate_user(email: EmailStr, password: str) -> User:
     user = await UserCRUD.select_by_email_or_none(email=email)
 
     if not user or (user and not await verify_password(password, user.hashed_password)):

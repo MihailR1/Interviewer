@@ -18,13 +18,13 @@ router_auth = APIRouter(prefix="/auth", tags=["Авторизация и рег�
 
 @router_auth.post("/register", status_code=201)
 async def register_user(response: Response, user_data: UserAuth) -> User:
-    existing_user = await UserCRUD.select_by_email_or_none(email=user_data.email)
+    existing_user: User | None = await UserCRUD.select_by_email_or_none(email=user_data.email)
 
     if existing_user:
         raise UserAlreadyExistsException
 
-    hashed_password = await get_password_hash(user_data.password)
-    new_user = await UserCRUD.insert(
+    hashed_password: str = await get_password_hash(user_data.password)
+    new_user: User = await UserCRUD.insert(
         email=user_data.email, hashed_password=hashed_password
     )
     await create_and_set_access_token_for_login(response, new_user.id)
@@ -34,7 +34,7 @@ async def register_user(response: Response, user_data: UserAuth) -> User:
 
 @router_auth.post("/login")
 async def login_user(response: Response, user_data: UserAuth) -> User:
-    user = await authenticate_user(user_data.email, user_data.password)
+    user: User = await authenticate_user(user_data.email, user_data.password)
     await create_and_set_access_token_for_login(response, user.id)
 
     return user

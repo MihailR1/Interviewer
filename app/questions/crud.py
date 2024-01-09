@@ -18,7 +18,7 @@ class QuestionCRUD(BaseCRUD):
     @classmethod
     async def find_question_by_same_title_or_text(
         cls, title: str, text: str
-    ) -> BaseCRUD._SchemaType:
+    ) -> BaseCRUD._SchemaType | None:
         query = (
             select(cls.model)
             .where((cls.model.title == title) | (cls.model.text == text))
