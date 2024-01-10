@@ -1,21 +1,54 @@
 import asyncio
+import random
 
+import faker
 import pytest
+from sqlalchemy import insert
 from sqlmodel import SQLModel
 from httpx import AsyncClient
 
 from app.main import app as fastapi_app
 from app.config import settings
 from app.database import engine, async_session_factory
+from app.questions.enums import Status
+from app.users.auth import get_password_hash
+from app.users.crud import UserCRUD
+from app.users.enums import Permission
+from app.users.models import User
+from app.questions.models import Question
 
 
 @pytest.fixture(scope="session", autouse=True)
 async def prepare_database():
+    fake = faker.Faker('ru_RU')
+
     assert settings.MODE == "TEST"
 
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
+
+    users = [
+        {'email': fake.ascii_free_email(), 'hashed_password': fake.password(length=18)}
+        for _ in range(10)
+    ]
+
+    questions = [
+        {
+            'user_id': 1,
+            'title': fake.paragraph(nb_sentences=1),
+            'text': fake.paragraph(nb_sentences=2),
+            'answer': fake.paragraph(nb_sentences=1),
+            'status': random.choice([Status.active, Status.moderation])
+        } for _ in range(10)
+    ]
+
+    async with async_session_factory() as session:
+        await session.execute(insert(User).values(users))
+        await session.flush()
+
+        await session.execute(insert(Question).values(questions))
+        await session.commit()
 
 
 @pytest.fixture(scope="session")
@@ -32,7 +65,35 @@ async def async_client():
         yield ac
 
 
-@pytest.fixture(scope="function")
-async def session():
-    async with async_session_factory() as session:
-        yield session
+@pytest.fixture
+async def create_user(async_client: AsyncClient):
+    fake = faker.Faker('ru_RU')
+
+    async def user(
+        is_auth=False,
+        email=fake.ascii_free_email(),
+        password=fake.password(length=18),
+        rights: Permission = Permission.user,
+    ):
+        if is_auth:
+            response = await async_client.post('/auth/register', json={
+                "email": email,
+                "password": password,
+                "rights": rights.value
+            })
+
+            response_json = response.json()
+            id = response_json.get('id')
+            rights = response_json.get('rights')
+
+        else:
+            hashed_password: str = await get_password_hash(password)
+            user_data = await UserCRUD.insert(
+                email=email, hashed_password=hashed_password, rights=rights
+            )
+            id = user_data.id
+            rights = user_data.rights
+
+        return User(id=id, email=email, rights=rights, hashed_password=password)
+
+    yield user
