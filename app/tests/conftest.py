@@ -51,6 +51,11 @@ async def prepare_database():
         await session.execute(insert(Question).values(questions))
         await session.commit()
 
+    yield
+
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.drop_all)
+
 
 @pytest.fixture(scope="session")
 def event_loop(request):
