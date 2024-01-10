@@ -3,24 +3,24 @@ import random
 
 import faker
 import pytest
+from httpx import AsyncClient
 from sqlalchemy import insert
 from sqlmodel import SQLModel
-from httpx import AsyncClient
 
-from app.main import app as fastapi_app
 from app.config import settings
-from app.database import engine, async_session_factory
+from app.database import async_session_factory, engine
+from app.main import app as fastapi_app
 from app.questions.enums import Status
+from app.questions.models import Question
 from app.users.auth import get_password_hash
 from app.users.crud import UserCRUD
 from app.users.enums import Permission
 from app.users.models import User
-from app.questions.models import Question
 
 
 @pytest.fixture(scope="session", autouse=True)
 async def prepare_database():
-    fake = faker.Faker('ru_RU')
+    fake = faker.Faker("ru_RU")
 
     assert settings.MODE == "TEST"
 
@@ -29,18 +29,19 @@ async def prepare_database():
         await conn.run_sync(SQLModel.metadata.create_all)
 
     users = [
-        {'email': fake.ascii_free_email(), 'hashed_password': fake.password(length=18)}
+        {"email": fake.ascii_free_email(), "hashed_password": fake.password(length=18)}
         for _ in range(10)
     ]
 
     questions = [
         {
-            'user_id': 1,
-            'title': fake.paragraph(nb_sentences=1),
-            'text': fake.paragraph(nb_sentences=2),
-            'answer': fake.paragraph(nb_sentences=1),
-            'status': random.choice([Status.active, Status.moderation])
-        } for _ in range(10)
+            "user_id": 1,
+            "title": fake.paragraph(nb_sentences=1),
+            "text": fake.paragraph(nb_sentences=2),
+            "answer": fake.paragraph(nb_sentences=1),
+            "status": random.choice([Status.active, Status.moderation]),
+        }
+        for _ in range(10)
     ]
 
     async with async_session_factory() as session:
@@ -61,13 +62,13 @@ def event_loop(request):
 
 @pytest.fixture(scope="function")
 async def async_client():
-    async with AsyncClient(app=fastapi_app, base_url='http://test') as ac:
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         yield ac
 
 
 @pytest.fixture
 async def create_user(async_client: AsyncClient):
-    fake = faker.Faker('ru_RU')
+    fake = faker.Faker("ru_RU")
 
     async def user(
         is_auth=False,
@@ -76,15 +77,14 @@ async def create_user(async_client: AsyncClient):
         rights: Permission = Permission.user,
     ):
         if is_auth:
-            response = await async_client.post('/auth/register', json={
-                "email": email,
-                "password": password,
-                "rights": rights.value
-            })
+            response = await async_client.post(
+                "/auth/register",
+                json={"email": email, "password": password, "rights": rights.value},
+            )
 
             response_json = response.json()
-            id = response_json.get('id')
-            rights = response_json.get('rights')
+            id = response_json.get("id")
+            rights = response_json.get("rights")
 
         else:
             hashed_password: str = await get_password_hash(password)

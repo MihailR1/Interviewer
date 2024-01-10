@@ -1,14 +1,14 @@
 import faker
 import pytest
 
-from app.questions.enums import Status, Levels
 from app.questions.crud import QuestionCRUD
+from app.questions.enums import Levels, Status
 from app.questions.models import Question
 
 
 @pytest.fixture
 async def create_question():
-    fake = faker.Faker('ru_RU')
+    fake = faker.Faker("ru_RU")
 
     async def question(
         save_in_db: bool = True,
@@ -23,7 +23,7 @@ async def create_question():
         medium_count: int = 0,
         hard_count: int = 0,
         views_count: int = 0,
-        got_at_interview: int = 0
+        got_at_interview: int = 0,
     ):
         if save_in_db:
             new_question = await QuestionCRUD.insert(
