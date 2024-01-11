@@ -12,6 +12,9 @@ else:
     DATABASE_URL = settings.DATABASE_URL
     DATABASE_PARAMS = {"echo": settings.SQL_ECHO}
 
+    if settings.MODE == 'PROD':
+        DATABASE_PARAMS = {"echo": False}
+
 
 engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
