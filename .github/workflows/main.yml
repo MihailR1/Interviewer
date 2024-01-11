@@ -1,0 +1,42 @@
+name: CI and CD
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+            -   uses: actions/setup-python@v5
+                with:
+                    python-version: 3.11
+            -   name: Install requirements
+                run: pip install -r requirements.txt
+            -   name: Create env file
+                run: echo "${{ secrets.ENV_FILE }}" > .env
+            -   name: Run tests
+                run: pytest .
+
+    production:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        needs: [ tests ]
+        steps:
+            -   name: Use SSH
+                uses: appleboy/ssh-action@v1.0.3
+                with:
+                    host: ${{ secrets.SSH_HOST }}
+                    username: ${{ secrets.SSH_USER }}
+                    password: ${{ secrets.SSH_PASSWORD }}
+                    port: ${{ secrets.SSH_PORT }}
+                    script: |
+                        cd Interviewer/
+                        docker compose stop
+                        git pull
+                        echo "${{ secrets.ENV_PROD }}" > .env
+                        docker compose build
+                        docker compose up -d
