@@ -21,13 +21,6 @@ from app.users.models import User
 @pytest.fixture(scope="session", autouse=True)
 async def prepare_database():
     fake = faker.Faker("ru_RU")
-
-    assert settings.MODE == "TEST"
-
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
-
     users = [
         {"email": fake.ascii_free_email(), "hashed_password": fake.password(length=18)}
         for _ in range(10)
@@ -35,7 +28,7 @@ async def prepare_database():
 
     questions = [
         {
-            "user_id": 1,
+            "user_id": random.randint(1, 10),
             "title": fake.paragraph(nb_sentences=1),
             "text": fake.paragraph(nb_sentences=2),
             "answer": fake.paragraph(nb_sentences=1),
@@ -43,6 +36,12 @@ async def prepare_database():
         }
         for _ in range(10)
     ]
+
+    assert settings.MODE == "TEST"
+
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.drop_all)
+        await conn.run_sync(SQLModel.metadata.create_all)
 
     async with async_session_factory() as session:
         await session.execute(insert(User).values(users))
