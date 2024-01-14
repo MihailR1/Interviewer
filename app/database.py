@@ -4,16 +4,14 @@ from sqlmodel import SQLModel
 
 from app.config import settings
 
+DATABASE_URL = settings.DATABASE_URL
+DATABASE_PARAMS = {"echo": settings.SQL_ECHO}
 
 if settings.MODE == 'TEST':
     DATABASE_URL = settings.TEST_DATABASE_URL
     DATABASE_PARAMS = {"poolclass": NullPool, "echo": False}
-else:
-    DATABASE_URL = settings.DATABASE_URL
-    DATABASE_PARAMS = {"echo": settings.SQL_ECHO}
-
-    if settings.MODE == 'PROD':
-        DATABASE_PARAMS = {"echo": False}
+elif settings.MODE == 'PROD':
+    DATABASE_PARAMS = {"echo": False}
 
 
 engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
