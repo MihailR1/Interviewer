@@ -1,12 +1,17 @@
+import sentry_sdk
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqladmin import Admin
 
 from app.admin.auth import authentication_backend
 from app.admin.view import CategoryAdmin, QuestionsAdmin, UserAdmin
+from app.config import settings
 from app.database import engine
 from app.questions.routes import router as questions_router
 from app.users.routes import router_auth, router_users
+
+if settings.MODE == 'PROD':
+    sentry_sdk.init(dsn=settings.SENTRY_DSN, enable_tracing=True)
 
 app = FastAPI()
 

@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     MODE: Literal["DEV", "TEST", "PROD"]
     LOG_LEVEL: str
+    SENTRY_DSN: str
 
     ACCESS_TOKEN_EXPIRE_DAYS: int
     SECRET_KEY: str
