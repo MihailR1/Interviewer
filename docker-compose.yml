@@ -6,6 +6,7 @@ services:
         container_name: fastapi
         env_file:
             - .env
+            - .env-non-dev
         ports:
             - "8000:8000"
         volumes:
@@ -21,6 +22,7 @@ services:
             - "5432:5432"
         env_file:
             - .env
+            - .env-non-dev
         volumes:
             - habrdb-data:/var/lib/postgresql/data
 
@@ -44,7 +46,7 @@ services:
         container_name: nginx-proxy-acme
         image: nginxproxy/acme-companion
         env_file:
-            - .env
+            - .env-non-dev
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
             - certs:/etc/nginx/certs

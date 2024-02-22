@@ -38,7 +38,7 @@ class Question(Base, table=True):
     )
     user_id: int = Field(default=None, foreign_key="Users.id")
     user: Optional["User"] = Relationship(back_populates="questions")
-    title: str = Field(sa_column=Column(TEXT, index=True, nullable=False))
+    title: str = Field(sa_column=Column(TEXT, index=True, nullable=False, unique=True))
     text: str = Field(sa_column=Column(TEXT, index=True, nullable=False))
     answer: str = Field(sa_column=Column(TEXT, index=True, nullable=False))
     level: Levels = Field(default=Levels.junior)

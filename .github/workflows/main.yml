@@ -1,16 +1,17 @@
-name: Main CI
+name: CI and CD
 
 on:
     push:
+        branches: [ main ]
+    pull_request:
         branches: [ main ]
 
 jobs:
     tests:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v3
-            -   name: Set up python
-                uses: actions/setup-python@v3
+            -   uses: actions/checkout@v4
+            -   uses: actions/setup-python@v5
                 with:
                     python-version: 3.11
             -   name: Install requirements
@@ -19,11 +20,13 @@ jobs:
                 run: echo "${{ secrets.ENV_FILE }}" > .env
             -   name: Run tests
                 run: pytest .
+
     production:
         runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
         needs: [ tests ]
         steps:
-            -   name: Login SSH
+            -   name: Use SSH
                 uses: appleboy/ssh-action@v1.0.3
                 with:
                     host: ${{ secrets.SSH_HOST }}
@@ -33,7 +36,7 @@ jobs:
                     script: |
                         cd Interviewer/
                         docker compose stop
-                        echo "${{ secrets.ENV_PROD }}" > .env
                         git pull
+                        echo "${{ secrets.ENV_PROD }}" > .env
                         docker compose build
                         docker compose up -d
